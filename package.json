@@ -1,0 +1,14 @@
+{
+  "name": "daybox",
+  "version": "1.0.0",
+  "description": "DayBox - 桌面任務與便簽管理",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . DayBox --platform=win32 --arch=x64 --out=dist --overwrite --icon=assets/icon.png --ignore=dist --ignore=node_modules/electron-packager --ignore=node_modules/@electron/packager"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "@electron/packager": "^18.3.0"
+  }
+}

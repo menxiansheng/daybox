@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DayBox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Custom Titlebar -->
+  <header class="titlebar" id="titlebar">
+    <div class="titlebar-drag">
+      <svg class="titlebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+        <rect x="9" y="3" width="6" height="4" rx="1"/>
+        <path d="M9 14l2 2 4-4"/>
+      </svg>
+      <span class="titlebar-title">DayBox</span>
+    </div>
+    <div class="titlebar-controls">
+      <button class="titlebar-btn" id="btn-minimize" title="最小化">
+        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <button class="titlebar-btn" id="btn-maximize" title="最大化">
+        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+      </button>
+      <button class="titlebar-btn titlebar-btn-close" id="btn-close" title="關閉">
+        <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- App Container -->
+  <div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">分類</h2>
+      </div>
+
+      <nav class="category-nav">
+        <button class="category-item active" data-category="all">
+          <span class="category-icon">📋</span>
+          <span class="category-label">全部任務</span>
+          <span class="category-count" id="count-all">0</span>
+        </button>
+        <button class="category-item" data-category="work">
+          <span class="category-icon">💼</span>
+          <span class="category-label">工作</span>
+          <span class="category-count" id="count-work">0</span>
+        </button>
+        <button class="category-item" data-category="personal">
+          <span class="category-icon">🏠</span>
+          <span class="category-label">個人</span>
+          <span class="category-count" id="count-personal">0</span>
+        </button>
+        <button class="category-item" data-category="study">
+          <span class="category-icon">📚</span>
+          <span class="category-label">學習</span>
+          <span class="category-count" id="count-study">0</span>
+        </button>
+        <button class="category-item" data-category="other">
+          <span class="category-icon">⭐</span>
+          <span class="category-label">其他</span>
+          <span class="category-count" id="count-other">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">功能</h2>
+      </div>
+      <nav class="category-nav">
+        <button class="category-item" id="notes-tab" data-view="notes">
+          <span class="category-icon">📌</span>
+          <span class="category-label">便簽</span>
+          <span class="category-count" id="count-notes">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-stats">
+        <h3 class="stats-title">統計概覽</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">總任務</span>
+          </div>
+          <div class="stat-card stat-card-done">
+            <span class="stat-value" id="stat-done">0</span>
+            <span class="stat-label">已完成</span>
+          </div>
+          <div class="stat-card stat-card-pending">
+            <span class="stat-value" id="stat-pending">0</span>
+            <span class="stat-label">待處理</span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        </div>
+        <p class="progress-text" id="progress-text">完成率 0%</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Toolbar -->
+      <div class="toolbar" id="toolbar">
+        <div class="toolbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" title="切換側邊欄">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+          </button>
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" class="search-input" id="search-input" placeholder="搜尋任務...">
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <div class="filter-group">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="active">進行中</button>
+            <button class="filter-btn" data-filter="completed">已完成</button>
+          </div>
+          <select class="sort-select" id="sort-select">
+            <option value="date-desc">最新建立</option>
+            <option value="date-asc">最早建立</option>
+            <option value="priority">優先級</option>
+            <option value="name">名稱</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Add Task Bar -->
+      <div class="add-task-bar" id="add-task-bar">
+        <div class="add-task-input-group">
+          <input type="text" class="add-task-input" id="add-task-input" placeholder="新增任務... 按 Enter 快速新增">
+          <input type="text" class="add-note-input" id="add-note-input" placeholder="備註（選填）">
+        </div>
+        <div class="add-task-options">
+          <select class="add-task-select" id="add-category-select">
+            <option value="work">💼 工作</option>
+            <option value="personal">🏠 個人</option>
+            <option value="study">📚 學習</option>
+            <option value="other">⭐ 其他</option>
+          </select>
+          <select class="add-task-select" id="add-priority-select">
+            <option value="medium">🟡 中</option>
+            <option value="high">🔴 高</option>
+            <option value="low">🟢 低</option>
+          </select>
+          <button class="add-task-btn" id="add-task-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            新增
+          </button>
+        </div>
+      </div>
+
+      <!-- Task List -->
+      <div class="task-list" id="task-list">
+        <!-- Tasks will be rendered here -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="empty-state" style="display:none;">
+        <div class="empty-illustration">
+          <svg viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="80" fill="#FFECD2" opacity="0.5"/>
+            <rect x="60" y="55" width="80" height="100" rx="8" fill="#FFF5EE" stroke="#FFCBA4" stroke-width="2"/>
+            <path d="M75 80h50M75 95h50M75 110h30" stroke="#DDB892" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="140" cy="140" r="25" fill="#FF6B6B" opacity="0.15"/>
+            <path d="M132 140l5 5 10-10" stroke="#FF6B6B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="empty-title">目前沒有任務</h3>
+        <p class="empty-text">在上方輸入框新增你的第一個任務吧！</p>
+      </div>
+    </main>
+
+    <!-- Notes View (hidden by default) -->
+    <div class="notes-view" id="notes-view" style="display:none;">
+      <div class="notes-toolbar">
+        <div class="toolbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle-notes" title="切換側邊欄">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+          </button>
+          <h2 class="notes-view-title">📌 便簽</h2>
+        </div>
+        <button class="add-task-btn" id="add-note-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          新增便簽
+        </button>
+      </div>
+      <div class="notes-grid" id="notes-grid">
+        <!-- Notes will be rendered here -->
+      </div>
+      <div class="empty-state" id="notes-empty" style="display:none;">
+        <div class="empty-illustration">
+          <svg viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="80" fill="#FFECD2" opacity="0.5"/>
+            <rect x="55" y="50" width="90" height="90" rx="6" fill="#FFF5EE" stroke="#FFCBA4" stroke-width="2" transform="rotate(3 100 95)"/>
+            <rect x="60" y="55" width="80" height="80" rx="6" fill="#FFF8F0" stroke="#FFD6A5" stroke-width="2" transform="rotate(-2 100 95)"/>
+            <path d="M75 80h50M75 95h40M75 110h30" stroke="#DDB892" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="145" cy="60" r="12" fill="#FF6B6B" opacity="0.2"/>
+            <path d="M145 55v10M140 60h10" stroke="#FF6B6B" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="empty-title">還沒有便簽</h3>
+        <p class="empty-text">點擊上方「新增便簽」建立你的第一張便簽吧！</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Task Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="edit-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">編輯任務</h3>
+        <button class="modal-close" id="modal-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-task-id">
+        <div class="form-group">
+          <label class="form-label" for="edit-title">任務標題</label>
+          <input type="text" class="form-input" id="edit-title" placeholder="輸入任務標題">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-note">備註說明</label>
+          <textarea class="form-textarea" id="edit-note" rows="3" placeholder="輸入備註說明（選填）"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="edit-category">分類</label>
+            <select class="form-select" id="edit-category">
+              <option value="work">💼 工作</option>
+              <option value="personal">🏠 個人</option>
+              <option value="study">📚 學習</option>
+              <option value="other">⭐ 其他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-priority">優先級</label>
+            <select class="form-select" id="edit-priority">
+              <option value="high">🔴 高</option>
+              <option value="medium">🟡 中</option>
+              <option value="low">🟢 低</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="modal-cancel">取消</button>
+        <button class="btn-save" id="modal-save">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Note Modal -->
+  <div class="modal-overlay" id="note-modal-overlay">
+    <div class="modal" id="note-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="note-modal-title">新增便簽</h3>
+        <button class="modal-close" id="note-modal-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="note-edit-id">
+        <div class="form-group">
+          <label class="form-label" for="note-edit-title">標題</label>
+          <input type="text" class="form-input" id="note-edit-title" placeholder="便簽標題">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="note-edit-content">內容</label>
+          <textarea class="form-textarea" id="note-edit-content" rows="8" placeholder="在此輸入便簽內容..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">顏色</label>
+          <div class="note-color-picker" id="note-color-picker">
+            <button class="note-color-btn active" data-color="#FFF5EE" style="background:#FFF5EE" title="蜜桃"></button>
+            <button class="note-color-btn" data-color="#FFF8E1" style="background:#FFF8E1" title="檸檬"></button>
+            <button class="note-color-btn" data-color="#E8F5E9" style="background:#E8F5E9" title="薄荷"></button>
+            <button class="note-color-btn" data-color="#E3F2FD" style="background:#E3F2FD" title="天空"></button>
+            <button class="note-color-btn" data-color="#F3E5F5" style="background:#F3E5F5" title="薰衣草"></button>
+            <button class="note-color-btn" data-color="#FCE4EC" style="background:#FCE4EC" title="玫瑰"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="note-modal-cancel">取消</button>
+        <button class="btn-save" id="note-modal-save">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
